@@ -83,12 +83,12 @@ function Update(props) {
 function App() {
     const [mode, setMode] = useState('WELCOME');
     const [id, setId] = useState(null);
-    const [nextId, setNextId] = useState(4);
     const [topics, setTopics] = useState([
         {id:1, title:'html', body:'html is ...'},
         {id:2, title:'css', body:'css is ...'},
         {id:3, title:'javascript', body:'javascript is ...'}
     ]);
+    const [nextId, setNextId] = useState(topics.length + 1);
 
     let content = null;
     let contextControl = null;
@@ -103,10 +103,23 @@ function App() {
             }
         }
         content = <Article title={title} body={body}/>
-        contextControl = <li><a href={'/update/' + id} onClick={event => {
-            event.preventDefault();
-            setMode('UPDATE');
-        }}>Update</a></li>
+        contextControl = <>
+            <li><a href={'/update/' + id} onClick={event => {
+                event.preventDefault();
+                setMode('UPDATE');
+            }}>Update</a></li>
+            <li><input type="button" value="Delete"onClick={() => {
+                const newTopics = [];
+                for (let i = 0; i < topics.length; i++) {
+                    if (topics[i].id !== id) {
+                        if (topics[i].id > id) topics[i].id -= 1;
+                        newTopics.push(topics[i]);
+                    }
+                }
+                setTopics(newTopics);
+                setMode('WELCOME');
+            }}/></li>
+        </>
     } else if (mode === 'CREATE') {
         content = <Create onCreate={(title, body) => {
             const newTopic = {id:nextId, title:title, body:body};
